@@ -1,2 +1,2 @@
-t9search: t9search.c
-	cc -std=c99 -Wall -Wextra -Werror t9search.c -o t9search
+t9search: src/t9search.c
+	cc -std=c99 -Wall -Wextra -Werror src/t9search.c -o t9search
