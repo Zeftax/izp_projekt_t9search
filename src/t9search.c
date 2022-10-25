@@ -6,17 +6,9 @@
 
 // Counts the number of elements in an array of chars
 int length_of_char_arr(char array[]);
-bool is_char_digit(char character)
-{
-	if((int) argv[1][i] > 47 || (int) argv[1][i] < 58)
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
-}
+
+// Does the given char have a value representing a digit between 0 and 9?
+bool is_char_digit(char character);
 
 // A contact. In our input list it consists of a name and a phone number.
 // Our program also adds a new value - the name parsed into number format.
@@ -29,9 +21,20 @@ typedef struct
 
 int length_of_char_arr(char array[])
 {
-	return sizeof(array / sizeof(char));
+	return sizeof(array) / sizeof(char);
 }
 
+bool is_char_digit(char character)
+{
+	if((int) character > 47 || character < 58)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
 
 int main(int argc, char *argv[])
 {
@@ -43,6 +46,7 @@ int main(int argc, char *argv[])
 	char jmeno[MAX+1], cislo[MAX+1]; // Fields for reading input.
 	char queryString[MAX+1]; // String of numbers to look for in contacts.
 
+	// First we check all the parameters and take relevant info from it
 	// Check whether the command received at least one parameter (string to look for).
 	if(argc > 1)
 	{
@@ -57,7 +61,7 @@ int main(int argc, char *argv[])
 		{
 			// Check whether a given character is a digit and add it to queryString
 			// If it is not, reject the query as it is not valid.
-			if((int) argv[1][i] > 47 || (int) argv[1][i] < 58)
+			if(is_char_digit(argv[1][i]))
 			{
 				queryString[i] = argv[1][i];
 			}
@@ -93,12 +97,16 @@ int main(int argc, char *argv[])
 					int j;
 					int numOfDigits = length_of_char_arr(argv[i+1]);
 
-					// Check if the argument is made up of digits onlz
+					// Check if the argument is made up of digits only
 					for(j = 0; j < numOfDigits; j++)
 					{
-
+						if(!is_char_digit(argv[i+1][j]))
+						{
+							fprintf(stderr, "Fatal Error -4: Invalid argument. l distance must be a non-negative integer.\n");
+						}
 					}
-					//
+
+					// If it passed the check, save it.
 					lvDist = atoi(argv[i+1]); // if arg could not be converted to int, retrns 0.
 				}
 				{
@@ -108,5 +116,8 @@ int main(int argc, char *argv[])
 			}
 		}
 	}
+
+	// Now we go through all the lines in the file and see if we can find any matches.
+
 }
 

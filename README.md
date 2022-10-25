@@ -21,6 +21,7 @@
 
 ## Query format
 * Please input your query using digits only. You can look for digits in number, or in name.
+* Query has to be less than or equal to 100 characters long.
 * If you are searching for a name, you can ignore special and white characters.
 * Input letters as you would on a normal mobile phone, but do not repeat digits to get to a letter. Quick quide:
 	* 0 = 0
@@ -46,5 +47,8 @@
 	* How much error is allowed in the input for the match to be still allowed to be positive.
 
 # Error codes
-	* -1 = No query specified. Please specify a string to look for.
-	* -2 = Invalid query. Please specify a query using only digits (refer to the query format section of the README).
+	* Fatal:
+		* -1 = No query specified. Please specify a string to look for.
+		* -2 = Invalid query. Please refer to the query format section of the README.
+		* -3 = No argument specified for <parameter>. This parameter is missing a required argument.
+		* -4 = Invalid argument. The argument you specified is not valid.
