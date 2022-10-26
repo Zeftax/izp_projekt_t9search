@@ -66,7 +66,7 @@ void parse_string(char input[], char output[])
 {
 	int i, j;	// Since some characters from input arent saved into the output, the active index of them can be different.
 
-	for(i = j = 0; i < 101; i++)
+	for(i = j = 0; i < strlen(input); i++)
 	{
 		if(strchr("0+", input[i]) != NULL)
 		{
@@ -116,16 +116,6 @@ void parse_string(char input[], char output[])
 		else if(strchr("9wWxXyYzZ", input[i]) != NULL)
 		{
 			output[j] = '9';
-			j++;
-		}
-		else if(input[i] == '\0')
-		{
-			output[j] = 'N';
-			j++;
-		}
-		else
-		{
-			output[j] = ' ';
 			j++;
 		}
 	}
@@ -216,8 +206,8 @@ int main(int argc, char *argv[])
 	// Now we go through all the lines in the file and see if we can find any matches.
 	while(!reached_eof)
 	{
-		char name[101], number[101];	// Arrays for reading input.
-		char parsedName[101], parsedNumber[101];	// Arrays for parsed input (used for comparing with query).
+		char name[101] = {}, number[101] = {};	// Arrays for reading input.
+		char parsedName[101] = {}, parsedNumber[101] = {};	// Arrays for parsed input (used for comparing with query).
 
 		// Read name, if EOF, quit
 		if(scan_line(name) == -1)
@@ -225,12 +215,14 @@ int main(int argc, char *argv[])
 			reached_eof = true;
 			break;
 		}
+		// Read the number as well
 		if(scan_line(number) == -1)
 		{
 			reached_eof = true;
 			break;
 		}
 
+		// Convert the name and number into numbers representation
 		parse_string(name, parsedName);
 		parse_string(number, parsedNumber);
 
