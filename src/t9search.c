@@ -6,6 +6,10 @@
 // Does the given char have a value representing a digit between 0 and 9?
 bool is_char_digit(char character);
 
+// Does a given string contain the query substring?
+// If skipchars is true, the query does not have to appear in one piece - can be scattered throughout.
+bool string_contains_query(char string[], char query[], bool skipChars);
+
 /* Reads a line from the standard input and saves it to array. Trims if line is longer than 100 characters
  *Returns:
  	* 0: Scanned succesfuly.
@@ -28,6 +32,36 @@ bool is_char_digit(char character)
 	{
 		return false;
 	}
+}
+
+bool string_contains_query(char string[], char query[], bool skipChars)
+{
+	int i;
+	int foundChars = 0;	// number of characters from the query that have been found in the string
+	int queryLen = strlen(query);	// number of characters in the query
+
+	// We will go through the entire string and each time we find a char from the query we increase the counter and go look for the next char (they have to bee in order)
+	// Depending on skipChars we can reset foundChars and start searching anew once we find a non-matching char.
+	for(i = 0; i < strlen(string); i++)
+	{
+		if(string[i] == query[foundChars])
+		{
+			foundChars++;
+
+			// Last char has been found.
+			if(foundChars == queryLen)
+			{
+				return true;
+			}
+		}
+		// If skipping chars is not allowed and we have not found a match, reset the counter.
+		else if (!skipChars)
+		{
+			foundChars = 0;
+		}
+	}
+
+	return false;
 }
 
 int scan_line(char array[])
@@ -116,7 +150,7 @@ int main(int argc, char *argv[])
 	bool reached_eof = false;	// Loop control variable for reading the input.
 	int i;	// Iterator variable
 
-	bool relaxedCheck;	// Corresponds to the -s command argument (view README for more info)
+	bool relaxedCheck = false;	// Corresponds to the -s command argument (view README for more info)
 	int lvDist = 0;		// Max allowed Levenshtein distance
 	int matches = 0;	// Number of matches found from contacts.
 	char queryString[101];		// String of numbers to look for in contacts.
@@ -162,7 +196,7 @@ int main(int argc, char *argv[])
 			// skip characters
 			if(strcmp(argv[i], "-s") == 0)
 			{
-				printf("-s arg supplied\n");
+				relaxedCheck = true;
 			}
 			// levenshtein distance
 			if(strcmp(argv[i], "-l") == 0)
@@ -216,10 +250,11 @@ int main(int argc, char *argv[])
 		parse_string(name, parsedName);
 		parse_string(number, parsedNumber);
 
-		printf("%s\n", name);
-		printf("%s\n", parsedName);
-		printf("%s\n", number);
-		printf("%s\n", parsedNumber);
+		if(string_contains_query(parsedName, queryString, relaxedCheck) || string_contains_query(parsedNumber, queryString, relaxedCheck))
+		{
+			printf("%s\n", name);
+			printf("%s\n", number);
+		}
 	}
 }
 
