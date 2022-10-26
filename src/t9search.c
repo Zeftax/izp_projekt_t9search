@@ -18,16 +18,6 @@ int scan_line(char array[]);
 // Parse string into numbers only format (see README). Ignoring all special and white characters
 void parse_string(char input[], char output[]);
 
-// A contact. In our input list it consists of a name and a phone number.
-// Our program also adds a new value - the name parsed into number format.
-typedef struct
-{
-	char name[101];			// Name of the contact
-	char number[101];		// Phone number of the contact
-	char parsedNumber[101];	// Parsed phone number of the contact
-	char parsedName[101];	// Name parsed into number format (see README for details)
-} contact;
-
 bool is_char_digit(char character)
 {
 	if((int) character > 47 || character < 58)
