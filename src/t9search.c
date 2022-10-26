@@ -199,30 +199,38 @@ int main(int argc, char *argv[])
 				relaxedCheck = true;
 			}
 			// levenshtein distance
-			if(strcmp(argv[i], "-l") == 0)
+			else if(strcmp(argv[i], "-l") == 0)
 			{
-				// Check if there is at least one more parameter after this one, if so, set the maximum levenshtein distance from it.
+				// Check if there is at least one more argument after this one, if so, set the maximum levenshtein distance from it.
 				if(argc > i + 1)
 				{
 					int j;
 					int numOfDigits = strlen(argv[i+1]);
 
+					i++; // increase I so we now work with the value argumant and so that it is skipped in the next argument evaluation.
+
 					// Check if the argument is made up of digits only
 					for(j = 0; j < numOfDigits; j++)
 					{
-						if(!is_char_digit(argv[i+1][j]))
+						if(!is_char_digit(argv[i][j]))
 						{
 							fprintf(stderr, "Fatal Error -4: Invalid argument. l distance must be a non-negative integer.\n");
 						}
 					}
 
 					// If it passed the check, save it.
-					lvDist = atoi(argv[i+1]); // if arg could not be converted to int, retrns 0.
+					lvDist = atoi(argv[i]); // if arg could not be converted to int, retrns 0.
 				}
+				else
 				{
 					fprintf(stderr, "Fatal Error -3: No argument specified for -l\n");
 					return -3;
 				}
+			}
+			else
+			{
+				fprintf(stderr, "Fatal Error -4: Invalid argument. %s is not a valid argument.\n", argv[i]);
+				return -4;
 			}
 		}
 	}
@@ -252,8 +260,7 @@ int main(int argc, char *argv[])
 
 		if(string_contains_query(parsedName, queryString, relaxedCheck) || string_contains_query(parsedNumber, queryString, relaxedCheck))
 		{
-			printf("%s\n", name);
-			printf("%s\n", number);
+			printf("%s, %s\n", name, number);
 		}
 	}
 }
