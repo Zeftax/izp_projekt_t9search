@@ -1,28 +1,32 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
 
-#define MAX 100
-
-// Counts the number of elements in an array of chars
-int length_of_char_arr(char array[]);
-
 // Does the given char have a value representing a digit between 0 and 9?
 bool is_char_digit(char character);
+
+/* Reads a line from the standard input and saves it to array. Trims if line is longer than 100 characters
+ *Returns:
+ 	* 0: Scanned succesfuly.
+	*-1: Reached EOF.
+	* 1: Had to trim the end.
+ * If both condition -1 and 1 are fulfilled, -1 is returned as it has higher priority.
+*/
+int scan_line(char array[]);
+
+// Parse string into numbers only format (see README). Ignoring all special and white characters
+void parse_string(char input[], char output[]);
 
 // A contact. In our input list it consists of a name and a phone number.
 // Our program also adds a new value - the name parsed into number format.
 typedef struct
 {
-	char name[MAX+1];		// Name of the contact
-	char number[MAX+1];		// Phone number of the contact
-	char parsedName[MAX+1];	// Name parsed into number format (see README for details)
+	char name[101];			// Name of the contact
+	char number[101];		// Phone number of the contact
+	char parsedNumber[101];	// Parsed phone number of the contact
+	char parsedName[101];	// Name parsed into number format (see README for details)
 } contact;
-
-int length_of_char_arr(char array[])
-{
-	return sizeof(array) / sizeof(char);
-}
 
 bool is_char_digit(char character)
 {
@@ -36,28 +40,120 @@ bool is_char_digit(char character)
 	}
 }
 
+int scan_line(char array[])
+{
+	char ln_of_chk;	// After reading a line, try to scan a character into this. If it is not \n, we didnt read the whole line.
+
+	// Read line, if EOF, return -1
+	if(scanf("%100[^\n]%c\n", array, &ln_of_chk) == EOF)
+	{
+		return -1;
+	}
+
+	// Check to see if whole line was read, or if it had overflown.
+	// If it did indeed overflow, replace last three chars with ... to indicate incomplete entry and move on to the next line.
+	// This does mean that these discarded characters will not be searchable, but I still find this approach more eloquent than just stopping the execution.
+	if(ln_of_chk != '\n')
+	{
+		array[100] = array[99] = array[98] = '.';	// replace last three chars with ...
+		scanf("%*[^\n]\n");	// skip to a new line
+		return 1;
+	}
+	return 0;
+}
+
+void parse_string(char input[], char output[])
+{
+	int i, j;	// Since some characters from input arent saved into the output, the active index of them can be different.
+
+	for(i = j = 0; i < 101; i++)
+	{
+		if(strchr("0+", input[i]) != NULL)
+		{
+			output[j] = '0';
+			j++;
+		}
+		else if(strchr("1", input[i]) != NULL)
+		{
+			output[j] = '1';
+			j++;
+		}
+		else if(strchr("2aAbBcC", input[i]) != NULL)
+		{
+			output[j] = '2';
+			j++;
+		}
+		else if(strchr("3dDeEfF", input[i]) != NULL)
+		{
+			output[j] = '3';
+			j++;
+		}
+		else if(strchr("4gGhHiI", input[i]) != NULL)
+		{
+			output[j] = '4';
+			j++;
+		}
+		else if(strchr("5jJkKlL", input[i]) != NULL)
+		{
+			output[j] = '5';
+			j++;
+		}
+		else if(strchr("6mMnNoO", input[i]) != NULL)
+		{
+			output[j] = '6';
+			j++;
+		}
+		else if(strchr("7pPqQrRsS", input[i]) != NULL)
+		{
+			output[j] = '7';
+			j++;
+		}
+		else if(strchr("8tTuUvV", input[i]) != NULL)
+		{
+			output[j] = '8';
+			j++;
+		}
+		else if(strchr("9wWxXyYzZ", input[i]) != NULL)
+		{
+			output[j] = '9';
+			j++;
+		}
+		else if(input[i] == '\0')
+		{
+			output[j] = 'N';
+			j++;
+		}
+		else
+		{
+			output[j] = ' ';
+			j++;
+		}
+	}
+}
+
 int main(int argc, char *argv[])
 {
-	int i; // Iterator variable
+	bool reached_eof = false;	// Loop control variable for reading the input.
+	int i;	// Iterator variable
 
-	bool relaxedCheck; // Corresponds to the -s command argument (view README for more info)
-	int lvDist = 0; // Max allowed Levenshtein distance
-	int matches = 0; // Number of matches found from contacts.
-	char jmeno[MAX+1], cislo[MAX+1]; // Fields for reading input.
-	char queryString[MAX+1]; // String of numbers to look for in contacts.
+	bool relaxedCheck;	// Corresponds to the -s command argument (view README for more info)
+	int lvDist = 0;		// Max allowed Levenshtein distance
+	int matches = 0;	// Number of matches found from contacts.
+	char queryString[101];		// String of numbers to look for in contacts.
 
 	// First we check all the parameters and take relevant info from it
 	// Check whether the command received at least one parameter (string to look for).
 	if(argc > 1)
 	{
 		// Set queryString from the parameter
-		int query_length = length_of_char_arr(argv[1]);	// Number of chars in query
-		if(query_length > MAX)
+		int query_length = strlen(argv[1]);	// Number of chars in query
+		if(query_length > 100)
 		{
 			fprintf(stderr, "Fatal Error -2: Invalid query. Query longer than 100 digits.\n");
 			return -2;
 		}
-		for(i = 0; i < query_length; i++);
+
+		for(i = 0; i < query_length; i++)
 		{
 			// Check whether a given character is a digit and add it to queryString
 			// If it is not, reject the query as it is not valid.
@@ -89,13 +185,13 @@ int main(int argc, char *argv[])
 				printf("-s arg supplied\n");
 			}
 			// levenshtein distance
-			if(strcmp(argv[i], "-l"), == 0)
+			if(strcmp(argv[i], "-l") == 0)
 			{
 				// Check if there is at least one more parameter after this one, if so, set the maximum levenshtein distance from it.
 				if(argc > i + 1)
 				{
 					int j;
-					int numOfDigits = length_of_char_arr(argv[i+1]);
+					int numOfDigits = strlen(argv[i+1]);
 
 					// Check if the argument is made up of digits only
 					for(j = 0; j < numOfDigits; j++)
@@ -118,6 +214,30 @@ int main(int argc, char *argv[])
 	}
 
 	// Now we go through all the lines in the file and see if we can find any matches.
+	while(!reached_eof)
+	{
+		char name[101], number[101];	// Arrays for reading input.
+		char parsedName[101], parsedNumber[101];	// Arrays for parsed input (used for comparing with query).
 
+		// Read name, if EOF, quit
+		if(scan_line(name) == -1)
+		{
+			reached_eof = true;
+			break;
+		}
+		if(scan_line(number) == -1)
+		{
+			reached_eof = true;
+			break;
+		}
+
+		parse_string(name, parsedName);
+		parse_string(number, parsedNumber);
+
+		printf("%s\n", name);
+		printf("%s\n", parsedName);
+		printf("%s\n", number);
+		printf("%s\n", parsedNumber);
+	}
 }
 

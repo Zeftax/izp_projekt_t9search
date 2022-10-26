@@ -18,6 +18,7 @@
 	* Contact name 3
 	* <\n>
 	* Contact number 3
+* Maximum length of a line is 100 characters. Any characters after the 100 mark will be discarted and not searchable (or displayed).
 
 ## Query format
 * Please input your query using digits only. You can look for digits in number, or in name.
