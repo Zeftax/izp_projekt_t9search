@@ -49,7 +49,6 @@
 
 # Error codes
 	* Fatal:
-		* -1 = No query specified. Please specify a string to look for.
-		* -2 = Invalid query. Please refer to the query format section of the README.
-		* -3 = No argument specified for <parameter>. This parameter is missing a required argument.
-		* -4 = Invalid argument. The argument you specified is not valid.
+		* -1 = Invalid query. Please refer to the query format section of the README.
+		* -2 = No argument specified for <parameter>. This parameter is missing a required argument.
+		* -3 = Invalid argument. The argument you specified is not valid.

@@ -24,7 +24,7 @@ void parse_string(char input[], char output[]);
 
 bool is_char_digit(char character)
 {
-	if((int) character > 47 || character < 58)
+	if((int) character > 47 && (int)character < 58)
 	{
 		return true;
 	}
@@ -142,6 +142,11 @@ void parse_string(char input[], char output[])
 			output[j] = '9';
 			j++;
 		}
+		else if(strchr(" ", input[i]) != NULL)
+		{
+			output[j] = ' ';
+			j++;
+		}
 	}
 }
 
@@ -153,7 +158,7 @@ int main(int argc, char *argv[])
 	bool relaxedCheck = false;	// Corresponds to the -s command argument (view README for more info)
 	int lvDist = 0;		// Max allowed Levenshtein distance
 	int matches = 0;	// Number of matches found from contacts.
-	char queryString[101];		// String of numbers to look for in contacts.
+	char queryString[101] = {};		// String of numbers to look for in contacts.
 
 	// First we check all the parameters and take relevant info from it
 	// Check whether the command received at least one parameter (string to look for).
@@ -163,8 +168,8 @@ int main(int argc, char *argv[])
 		int query_length = strlen(argv[1]);	// Number of chars in query
 		if(query_length > 100)
 		{
-			fprintf(stderr, "Fatal Error -2: Invalid query. Query longer than 100 digits.\n");
-			return -2;
+			fprintf(stderr, "Fatal Error -1: Invalid query. Query longer than 100 digits.\n");
+			return -1;
 		}
 
 		for(i = 0; i < query_length; i++)
@@ -177,15 +182,10 @@ int main(int argc, char *argv[])
 			}
 			else
 			{
-				fprintf(stderr, "Fatal Error -2: Invalid query. %c is not a digit.\n", argv[1][i]);
-				return -2;
+				fprintf(stderr, "Fatal Error -1: Invalid query. %c is not a digit.\n", argv[1][i]);
+				return -1;
 			}
 		}
-	}
-	else
-	{
-		fprintf(stderr, "Fatal Error -1: No query specified.\n");
-		return -1;
 	}
 
 	// Go through command arguments and take appropriate actions (view README for more info on each argument)
@@ -214,7 +214,8 @@ int main(int argc, char *argv[])
 					{
 						if(!is_char_digit(argv[i][j]))
 						{
-							fprintf(stderr, "Fatal Error -4: Invalid argument. l distance must be a non-negative integer.\n");
+							fprintf(stderr, "Fatal Error -3: Invalid argument. l distance must be a non-negative integer.\n");
+							return -3;
 						}
 					}
 
@@ -223,14 +224,14 @@ int main(int argc, char *argv[])
 				}
 				else
 				{
-					fprintf(stderr, "Fatal Error -3: No argument specified for -l\n");
-					return -3;
+					fprintf(stderr, "Fatal Error -2: No argument specified for -l\n");
+					return -2;
 				}
 			}
 			else
 			{
-				fprintf(stderr, "Fatal Error -4: Invalid argument. %s is not a valid argument.\n", argv[i]);
-				return -4;
+				fprintf(stderr, "Fatal Error -3: Invalid argument. %s is not a valid argument.\n", argv[i]);
+				return -3;
 			}
 		}
 	}
@@ -258,10 +259,16 @@ int main(int argc, char *argv[])
 		parse_string(name, parsedName);
 		parse_string(number, parsedNumber);
 
-		if(string_contains_query(parsedName, queryString, relaxedCheck) || string_contains_query(parsedNumber, queryString, relaxedCheck))
+		if(strlen(queryString) == 0 || string_contains_query(parsedName, queryString, relaxedCheck) || string_contains_query(parsedNumber, queryString, relaxedCheck))
 		{
+			matches++;
 			printf("%s, %s\n", name, number);
 		}
+	}
+
+	if(matches == 0)
+	{
+		printf("Not found\n");
 	}
 }
 
