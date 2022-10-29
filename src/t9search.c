@@ -90,6 +90,7 @@ void parse_string(char input[], char output[])
 {
 	int i, j;	// Since some characters from input arent saved into the output, the active index of them can be different.
 
+	// Go through all chars in input, if they match a character inputtable by t9 or a space, add their number to the output.
 	for(i = j = 0; i < strlen(input); i++)
 	{
 		if(strchr("0+", input[i]) != NULL)
@@ -259,6 +260,7 @@ int main(int argc, char *argv[])
 		parse_string(name, parsedName);
 		parse_string(number, parsedNumber);
 
+		// If the query is empty, or either the name or numbers match the query, print them on screen and increase the matches found counter.
 		if(strlen(queryString) == 0 || string_contains_query(parsedName, queryString, relaxedCheck) || string_contains_query(parsedNumber, queryString, relaxedCheck))
 		{
 			matches++;
@@ -266,6 +268,7 @@ int main(int argc, char *argv[])
 		}
 	}
 
+	// If no matches have been found, print Not found message
 	if(matches == 0)
 	{
 		printf("Not found\n");
