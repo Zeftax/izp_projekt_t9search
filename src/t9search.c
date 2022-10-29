@@ -54,10 +54,11 @@ bool string_contains_query(char string[], char query[], bool skipChars)
 				return true;
 			}
 		}
-		// If skipping chars is not allowed and we have not found a match, reset the counter.
+		// If skipping chars is not allowed and we have not found a match, return to start of querySearch + 1.
 		else if (!skipChars)
 		{
-			foundChars = 0;
+			i = i - foundChars; // set I t obeginning of current query + 1
+			foundChars = 0; // reset query counter
 		}
 	}
 
@@ -162,37 +163,10 @@ int main(int argc, char *argv[])
 	char queryString[101] = {};		// String of numbers to look for in contacts.
 
 	// First we check all the parameters and take relevant info from it
-	// Check whether the command received at least one parameter (string to look for).
+	// Go through command arguments and take appropriate actions (view README for more info on each argument)
 	if(argc > 1)
 	{
-		// Set queryString from the parameter
-		int query_length = strlen(argv[1]);	// Number of chars in query
-		if(query_length > 100)
-		{
-			fprintf(stderr, "Fatal Error -1: Invalid query. Query longer than 100 digits.\n");
-			return -1;
-		}
-
-		for(i = 0; i < query_length; i++)
-		{
-			// Check whether a given character is a digit and add it to queryString
-			// If it is not, reject the query as it is not valid.
-			if(is_char_digit(argv[1][i]))
-			{
-				queryString[i] = argv[1][i];
-			}
-			else
-			{
-				fprintf(stderr, "Fatal Error -1: Invalid query. %c is not a digit.\n", argv[1][i]);
-				return -1;
-			}
-		}
-	}
-
-	// Go through command arguments and take appropriate actions (view README for more info on each argument)
-	if(argc > 2)
-	{
-		for(i = 2; i < argc; i++)
+		for(i = 1; i < argc - 1; i++)
 		{
 			// skip characters
 			if(strcmp(argv[i], "-s") == 0)
@@ -233,6 +207,29 @@ int main(int argc, char *argv[])
 			{
 				fprintf(stderr, "Fatal Error -3: Invalid argument. %s is not a valid argument.\n", argv[i]);
 				return -3;
+			}
+		}
+
+		// Set queryString from the parameter
+		int query_length = strlen(argv[argc-1]);	// Number of chars in query
+		if(query_length > 100)
+		{
+			fprintf(stderr, "Fatal Error -1: Invalid query. Query longer than 100 digits.\n");
+			return -1;
+		}
+
+		for(i = 0; i < query_length; i++)
+		{
+			// Check whether a given character is a digit and add it to queryString
+			// If it is not, reject the query as it is not valid.
+			if(is_char_digit(argv[argc-1][i]))
+			{
+				queryString[i] = argv[argc-1][i];
+			}
+			else
+			{
+				fprintf(stderr, "Fatal Error -1: Invalid query. %c is not a digit.\n", argv[1][i]);
+				return -1;
 			}
 		}
 	}
