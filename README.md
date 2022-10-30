@@ -43,9 +43,6 @@
 		* Query you inputed is 4676
 		* Without -s parameter this contact will not be found, because it does not contain this sequence of numbers.
 		* With the -s parameter this contact will be found, because all these characters in this order do appear in the number.
-* -l = Levenshtein distance
-	* Not Implemented Yet
-	* How much error is allowed in the input for the match to be still allowed to be positive.
 
 # Error codes
 	* Fatal:
