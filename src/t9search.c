@@ -1,3 +1,7 @@
+/*
+*	Author xborov08
+*	Title Project 1
+*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -42,7 +46,7 @@ bool string_contains_query(char string[], char query[], bool skipChars)
 
 	// We will go through the entire string and each time we find a char from the query we increase the counter and go look for the next char (they have to bee in order)
 	// Depending on skipChars we can reset foundChars and start searching anew once we find a non-matching char.
-	for(i = 0; i < strlen(string); i++)
+	for(i = 0; (long unsigned int) i < strlen(string); i++)
 	{
 		if(string[i] == query[foundChars])
 		{
@@ -92,7 +96,7 @@ void parse_string(char input[], char output[])
 	int i, j;	// Since some characters from input arent saved into the output, the active index of them can be different.
 
 	// Go through all chars in input, if they match a character inputtable by t9 or a space, add their number to the output.
-	for(i = j = 0; i < strlen(input); i++)
+	for(i = j = 0; (long unsigned int) i < strlen(input); i++)
 	{
 		if(strchr("0+", input[i]) != NULL)
 		{
@@ -158,7 +162,6 @@ int main(int argc, char *argv[])
 	int i;	// Iterator variable
 
 	bool relaxedCheck = false;	// Corresponds to the -s command argument (view README for more info)
-	int lvDist = 0;		// Max allowed Levenshtein distance
 	int matches = 0;	// Number of matches found from contacts.
 	char queryString[101] = {};		// String of numbers to look for in contacts.
 
@@ -172,36 +175,6 @@ int main(int argc, char *argv[])
 			if(strcmp(argv[i], "-s") == 0)
 			{
 				relaxedCheck = true;
-			}
-			// levenshtein distance
-			else if(strcmp(argv[i], "-l") == 0)
-			{
-				// Check if there is at least one more argument after this one, if so, set the maximum levenshtein distance from it.
-				if(argc > i + 1)
-				{
-					int j;
-					int numOfDigits = strlen(argv[i+1]);
-
-					i++; // increase I so we now work with the value argumant and so that it is skipped in the next argument evaluation.
-
-					// Check if the argument is made up of digits only
-					for(j = 0; j < numOfDigits; j++)
-					{
-						if(!is_char_digit(argv[i][j]))
-						{
-							fprintf(stderr, "Fatal Error -3: Invalid argument. l distance must be a non-negative integer.\n");
-							return -3;
-						}
-					}
-
-					// If it passed the check, save it.
-					lvDist = atoi(argv[i]); // if arg could not be converted to int, retrns 0.
-				}
-				else
-				{
-					fprintf(stderr, "Fatal Error -2: No argument specified for -l\n");
-					return -2;
-				}
 			}
 			else
 			{
